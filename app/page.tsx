@@ -7,6 +7,8 @@ import Output from "./components/Output";
 type DiffPart = {
   value: string;
   type: "added" | "removed" | "unchanged";
+  lineNumber1?: number;
+  lineNumber2?: number;
 };
 
 export default function Home() {
@@ -14,8 +16,9 @@ export default function Home() {
   const [file2Content, setFile2Content] = useState<string>("");
   const [input1, setInput1] = useState<string>("");
   const [input2, setInput2] = useState<string>("");
-  const [diffOutput1, setDiffOutput1] = useState<DiffPart[]>([]);
-  const [diffOutput2, setDiffOutput2] = useState<DiffPart[]>([]);
+  // const [diffOutput1, setDiffOutput1] = useState<DiffPart[]>([]);
+  // const [diffOutput2, setDiffOutput2] = useState<DiffPart[]>([]);
+  const [diffOutput, setDiffOutput] = useState<DiffPart[]>([]);
 
   const formatJSON = (text: string): string => {
     try {
@@ -39,27 +42,38 @@ export default function Home() {
   };
 
   const handleCompare = () => {
-    const text1 = formatJSON(file1Content || input1);
-    const text2 = formatJSON(file2Content || input2);
+    const text1 = formatJSON(file1Content || input1).split("\n");
+    const text2 = formatJSON(file2Content || input2).split("\n");
 
-    const diff: Change[] = diffLines(text1, text2);
+    const diff: Change[] = diffLines(text1.join("\n"), text2.join("\n"));
+    const diffParts: DiffPart[] = [];
 
-    const output1: DiffPart[] = [];
-    const output2: DiffPart[] = [];
+    let lineNumber1 = 1;
+    let lineNumber2 = 1;
 
     diff.forEach((part) => {
-      if (part.added) {
-        output2.push({ value: part.value, type: "added" });
-      } else if (part.removed) {
-        output1.push({ value: part.value, type: "removed" });
-      } else {
-        output1.push({ value: part.value, type: "unchanged" });
-        output2.push({ value: part.value, type: "unchanged" });
-      }
+      const lines = part.value.split("\n").filter((line) => line !== "");
+      lines.forEach((line) => {
+        if (part.added) {
+          diffParts.push({ value: line, type: "added", lineNumber2 });
+          lineNumber2++;
+        } else if (part.removed) {
+          diffParts.push({ value: line, type: "removed", lineNumber1 });
+          lineNumber1++;
+        } else {
+          diffParts.push({
+            value: line,
+            type: "unchanged",
+            lineNumber1,
+            lineNumber2,
+          });
+          lineNumber1++;
+          lineNumber2++;
+        }
+      });
     });
 
-    setDiffOutput1(output1);
-    setDiffOutput2(output2);
+    setDiffOutput(diffParts);
   };
 
   return (
@@ -102,12 +116,12 @@ export default function Home() {
         {/* Left Diff Output */}
         <div className="p-4 border rounded-lg bg-white">
           <h2 className="text-xl font-bold mb-4">File 1 / JSON Differences:</h2>
-          <Output output={diffOutput1} />
+          <Output output={diffOutput} section="first" />
         </div>
         {/* Right Diff Output */}
         <div className="p-4 border rounded-lg bg-white">
           <h2 className="text-xl font-bold mb-4">File 2 / JSON Differences:</h2>
-          <Output output={diffOutput2} />
+          <Output output={diffOutput} section="second" />
         </div>
       </div>
     </div>
