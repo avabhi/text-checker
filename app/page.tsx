@@ -16,8 +16,6 @@ export default function Home() {
   const [file2Content, setFile2Content] = useState<string>("");
   const [input1, setInput1] = useState<string>("");
   const [input2, setInput2] = useState<string>("");
-  // const [diffOutput1, setDiffOutput1] = useState<DiffPart[]>([]);
-  // const [diffOutput2, setDiffOutput2] = useState<DiffPart[]>([]);
   const [diffOutput, setDiffOutput] = useState<DiffPart[]>([]);
 
   const formatJSON = (text: string): string => {
@@ -81,7 +79,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-6">
         Text and JSON Difference Finder
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full ">
         {/* Left Input */}
         <div>
           <InputField
@@ -112,7 +110,7 @@ export default function Home() {
       >
         Compare
       </button>
-      <div className="mt-6 grid grid-cols-2 gap-6 w-full max-w-4xl">
+      <div className="mt-6 grid grid-cols-2 gap-6 w-full ">
         {/* Left Diff Output */}
         <div className="p-4 border rounded-lg bg-white">
           <h2 className="text-xl font-bold mb-4">File 1 / JSON Differences:</h2>
