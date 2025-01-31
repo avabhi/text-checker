@@ -3,13 +3,8 @@ import React, { useState, ChangeEvent } from "react";
 import { diffLines, Change } from "diff";
 import InputField from "./components/InputField";
 import Output from "./components/Output";
-
-type DiffPart = {
-  value: string;
-  type: "added" | "removed" | "unchanged";
-  lineNumber1?: number;
-  lineNumber2?: number;
-};
+import { DiffPart } from "@/types/schema";
+import generalUtils from "@/utils/generalUtils";
 
 export default function Home() {
   const [file1Content, setFile1Content] = useState<string>("");
@@ -110,6 +105,15 @@ export default function Home() {
       >
         Compare
       </button>
+      <div>
+        {generalUtils.findIdentity(diffOutput) ? (
+          <>
+            <h1 className="text-2xl font-bold my-[1rem] bg-green-700 p-[1rem] rounded-lg text-white">
+              There are no differences in text snippet
+            </h1>
+          </>
+        ) : null}
+      </div>
       <div className="mt-6 grid grid-cols-2 gap-6 w-full ">
         {/* Left Diff Output */}
         <div className="p-4 border rounded-lg bg-white">

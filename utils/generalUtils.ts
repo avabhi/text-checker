@@ -1,3 +1,4 @@
+import { DiffPart } from "@/types/schema";
 
 const formatJSON = (text: string): string => {
   try {
@@ -9,8 +10,22 @@ const formatJSON = (text: string): string => {
   }
 };
 
+const findIdentity = (data: DiffPart[]) => {
+  let result = true;
+  data.forEach((part) => {
+    if (part.type === "added" || part.type === "removed") {
+      result = false;
+      return;
+    }
+  });
+  return result;
+};
+
 const generalUtils = {
     formatJSON,
+    findIdentity
 }
+
+
 
 export default generalUtils;

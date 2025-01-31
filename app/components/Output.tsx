@@ -14,34 +14,43 @@ interface IOutoutProps {
 
 const Output: React.FC<IOutoutProps> = ({ output, section }) => {
   return (
-    <pre className="text-lg font-mono">
+    <pre className="flex flex-col ">
       {output.map((part, index) => (
         <div
           key={index}
-          className={`text-wrap break-all overflow-w trasnaparent ${
-            part.type === "added" ? "bg-green-200" : ""
-          } ${part.type === "removed" ? "bg-red-200" : ""}`}
+          className={`text-wrap flex gap-x-[1rem] text-sm break-all overflow-w trasnaparent ${
+            part.type === "added" && section === "second" ? "bg-green-200" : ""
+          } ${
+            part.type === "removed" && section === "first" ? "bg-red-200" : ""
+          }
+          ${part.type === "added" && section === "first" ? "w-0 h-0" : ""}
+          ${part.type === "removed" && section === "second" ? "w-0 h-0" : ""}
+          `}
         >
-          {section === "first" ? (
-            <>
-              <span className="text-gray-600">
-                {part.lineNumber1 !== undefined ? `${part.lineNumber1}: ` : ""}
-              </span>
-              {part.type !== "added" && part.value}
-            </>
-          ) : (
-            <>
-              <span className="text-gray-600">
-                {part.lineNumber2 !== undefined ? `${part.lineNumber2}: ` : ""}
-              </span>
-              {part.type !== "removed" && part.value}
-            </>
+          {section === "first" && part.type !== "added" && (
+            <TextContent text={part.value} lineNumber={part.lineNumber1} />
           )}
-
-          {/* {part.value} */}
+          {section === "second" && part.type !== "removed" && (
+            <TextContent text={part.value} lineNumber={part.lineNumber2} />
+          )}
         </div>
       ))}
     </pre>
+  );
+};
+interface ITextContentProps {
+  text: string;
+  lineNumber?: number;
+}
+
+const TextContent: React.FC<ITextContentProps> = ({ text, lineNumber }) => {
+  return (
+    <div className="flex gap-x-2 p-[0.25rem]">
+      <p className="text-gray-600">
+        {lineNumber !== undefined ? `${lineNumber}: ` : ""}
+      </p>
+      <p className=""> {text}</p>
+    </div>
   );
 };
 
